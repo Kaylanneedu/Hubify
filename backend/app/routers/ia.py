@@ -13,7 +13,7 @@ async def sugerir_descricao(payload: IASolicitacao):
         resultado = await descricao_IA(payload.titulo, payload.tipo)
         
         tags_str = ", ".join(resultado["tags"])  
-        logger.info(f"Sugestão gerada para título '{payload.titulo}'")
+        logger.info(f"Sugestão gerada por IA para o título '{payload.titulo}'")
         return {"descricao": resultado["descricao"], "tags": tags_str}
     except Exception as e:
         logger.error(f"Falha ao gerar sugestão: {e}")

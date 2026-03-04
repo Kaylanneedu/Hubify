@@ -18,24 +18,15 @@ async def descricao_IA(titulo: str, tipo: Tipo):
         }
     
     genai.configure(api_key=settings.GEMINI_API_KEY)
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.5-flash")
     prompt = f"""
+    Você é um assistente pedagógico. Gere uma descrição curta (máx 300 caracteres) 
+    e 3 tags para um recurso educacional com título "{titulo}" e tipo "{tipo}".
 
-    Voce é um assistente pedagógico de IA da API Hubify. Seu trabalho
-    é gerar uma descrição curta e precisa com no (máximo 300 caracteres) 
-    sobre um recurso educacional com base nos recursos:
+    A resposta deve ser APENAS um objeto JSON válido no formato:
+    {{"descricao": "descrição aqui", "tags": ["tag1", "tag2", "tag3"]}}
 
-    Titulo: {titulo} 
-    Tipo: {tipo} 
-  
-    Lembre que a resposta deve ser APENAS com um objeto JSON válido no formato:
-    {{
-        "descricao": "Aqui vai a descrição gerada pela IA",
-        "tags": ["tag1", "tag2", "tag3"]
-    }}
-
-    As tags devem ser funcionais e exatamente 3.
-    Não inclua nada adicional que não foi pedido, nem Markdown.
+    Não inclua nenhum texto adicional, nem markdown.
     """
 
     try:
@@ -44,14 +35,11 @@ async def descricao_IA(titulo: str, tipo: Tipo):
         response = await asyncio.to_thread(model.generate_content, prompt)
         latency = time.time() - start
 
-        # Extrair texto e remover possíveis marcações de código
         texto = response.text
         texto = texto.replace('```json', '').replace('```', '').strip()
 
-        # Tentar parsear JSON
         resultado = json.loads(texto)
 
-        # Validar se tem os campos esperados
         if "descricao" not in resultado or "tags" not in resultado:
             raise ValueError("Resposta da IA não contém os campos esperados")
 
@@ -62,13 +50,13 @@ async def descricao_IA(titulo: str, tipo: Tipo):
 
     except json.JSONDecodeError as e:
         logger.error(f"Erro ao decodificar JSON da IA: {e}. Resposta recebida: {texto if 'texto' in locals() else 'N/A'}")
-        # Fallback para simulação
         return {
             "descricao": f"Descrição para {titulo} (falha na IA)",
             "tags": [titulo.split()[0].lower(), tipo.value, "fallback"]
         }
     except Exception as e:
-        logger.error(f"Erro na chamada da IA: {e}")
+        logger.error(f"Erro na chamada da IA: {type(e).__name__} - {str(e)}")
         return {
             "descricao": f"Descrição para {titulo} (erro)",
-            "tags": [titulo.split()[0].lower(), tipo.value, "erro"]}
+            "tags": [titulo.split()[0].lower(), tipo.value, "erro"]
+        }
