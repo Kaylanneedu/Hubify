@@ -1,6 +1,6 @@
-#  Hubify - Hub Inteligente de Recursos Educacionais
+# Hubify - Hub Inteligente de Recursos Educacionais
 
-##  Descrição
+## Descrição
 
 O **Hubify** é um projeto Fullstack desenvolvido para gerenciamento de recursos educacionais.
 
@@ -28,35 +28,53 @@ O sistema permite:
 - JavaScript
 - CSS
 
-###  Integrações
+### Integrações
 - Gemini API (IA para geração de descrição e tags)
 
-###  Ferramentas
+### Ferramentas
 - Git
 - GitHub
 
 ---
+
 # Como Rodar o Projeto
 
 ## Clonar o Repositório
 
+```bash
 git clone https://github.com/seuusuario/hubify.git
-cd hubify 
+cd hubify
+```
 
-#Configurar arquivos de ambiente(na raiz do projeto) e edite as variavel com a sua chave de API onde é ordenado e tambem no url do front normalmente 
+## Configurar Arquivos de Ambiente
+
+Copie os arquivos de exemplo e edite as variáveis com sua chave da API e a URL do frontend.
+
+```bash
 copy .env.exemplo backend\.env
 copy .env.exemplo.front frontend\.env
+```
 
-#Configurar Backend
+Exemplo de variável no backend (.env):
+
+```env
+GEMINI_API_KEY=sua_chave_aqui
+FRONTEND_URL=http://localhost:5173
+```
+
+## Configurar Backend
+
+```bash
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
-uvicorn main:app --reload 
+uvicorn main:app --reload
+```
 
-#Configurar Frontend
+## Configurar Frontend
+
+```bash
 cd frontend
 npm install
 npm run dev
-
-
-
+```
